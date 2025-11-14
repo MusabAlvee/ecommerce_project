@@ -1,0 +1,55 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django / Python environment
+*.env
+*.venv
+env/
+venv/
+ENV/
+.venv/
+
+# Django migrations (optional)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Database
+*.sqlite3
+
+# Static files
+/staticfiles/
+/static/
+
+# Media files (user uploaded)
+media/
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Mac / Windows system files
+*.swp
+*.bak
+*.tmp
+
+# Optional: pipenv / poetry files
+Pipfile.lock
+poetry.lock
