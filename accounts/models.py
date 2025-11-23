@@ -29,7 +29,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_admin', False)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_active', False)
         return self._create_user(first_name, last_name, username, email, password, **extra_fields)
 
     def create_superuser(self, first_name = None, last_name = None, username = None, email = None, password = None, **extra_fields):
@@ -50,7 +50,7 @@ class User(AbstractBaseUser):
     last_login = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
     objects = UserManager()

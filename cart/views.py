@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from store.models import Product, Variation
 from .models import Cart, CartItem
 from django.http import HttpResponse
@@ -12,6 +13,8 @@ def _cart_id(request):
     if not cart:
         cart = request.session.create()
     return cart
+
+
 
 def add_cart(request, product_id):
     product = Product.objects.get(id = product_id)
@@ -74,7 +77,10 @@ def add_cart(request, product_id):
         cart_item.save()
     return redirect('cart:cart')
 
+
 def cart(request, total=0, quantity = 0, cart_items = None, item_count=0):
+    tax = 0
+    full_total = 0
     try:
         cart = Cart.objects.get(cart_id = _cart_id(request))
         cart_items = CartItem.objects.filter(cart=cart,is_active = True)
@@ -97,6 +103,8 @@ def cart(request, total=0, quantity = 0, cart_items = None, item_count=0):
         'item_count': item_count,
     })
 
+
+
 def decrease_item(request, product_id, cart_item_id):
     product = Product.objects.get(id=product_id)
     cart = Cart.objects.get(cart_id=_cart_id(request))
@@ -108,6 +116,8 @@ def decrease_item(request, product_id, cart_item_id):
     except:
         pass
     return redirect('cart:cart')
+
+
 
 def delete_cart_item(request, product_id, cart_item_id):
     product = Product.objects.get(id=product_id)
