@@ -4,6 +4,8 @@ from .models import User
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from cart.views import _cart_id
+from cart.models import Cart, CartItem
 
 # USER ACTIVATION
 
@@ -97,9 +99,50 @@ def login(request):
         
         user = auth.authenticate(email=email, password=password)
         if user is not None:
+            try:
+                cart = Cart.objects.get(cart_id=_cart_id(request))
+                is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+                if is_cart_item_exists:
+                    cart_item = CartItem.objects.filter(cart=cart)
+
+                    product_variation = []
+                    
+                    for item in cart_item:
+                        variation = item.variation.all()
+                        product_variation.append(list(variation))
+
+                    cart_item = CartItem.objects.filter(user=user)
+                    ex_var_list = []
+                    id = []
+                    for item in cart_item:
+                        existing_variation = item.variation.all()
+                        ex_var_list.append(list(existing_variation))
+                        id.append(item.id)
+
+                    for pr in product_variation: 
+                        if pr in ex_var_list:
+                            index = ex_var_list.index(pr)
+                            item_id = id[index]
+                            item = CartItem.objects.get(id=item_id)
+                            item.quantity +=1
+                            item.user = user
+                            item.save()
+                    
+                        else:
+                            cart_item = CartItem.objects.filter(cart=cart)
+                            for item in cart_item:
+                                item.user = user
+                                item.save()
+            except:
+                pass
+
             auth.login(request, user)
             messages.success(request, 'You are logged in')
-            return redirect('accounts:dashboard')
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            else:
+                return redirect('accounts:dashboard')
         else:
             messages.error(request, 'Wrong Credentials')
             return redirect('accounts:login')
